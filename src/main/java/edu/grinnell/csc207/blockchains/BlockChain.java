@@ -32,7 +32,15 @@ public class BlockChain implements Iterable<Transaction> {
   // +---------+-----------------------------------------------------
   // | Helpers |
   // +---------+
+  public Block getLastBlock() {
+    Block current = this.rootBlock;
+    
+    while(current.getNextBlock() != null) {
+      current = current.getNextBlock();
+    }
 
+    return current;
+  }
   // +---------+-----------------------------------------------------
   // | Methods |
   // +---------+
