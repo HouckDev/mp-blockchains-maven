@@ -10,12 +10,40 @@ public class Block {
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
+  // Meta data
   int num;
+  
+  // Block data
   Transaction transaction;
   Hash hash;
   Hash preHash;
   HashValidator check;
   long nonce;
+
+  // Connection data
+  Block previousBlock;
+  public Block getPreviousBlock() {
+    return previousBlock;
+  }
+
+  public void setPreviousBlock(Block previousBlock) {
+    if (this.previousBlock != null) {previousBlock.nextBlock = null;}
+    this.previousBlock = previousBlock;
+    if (this.previousBlock != null) {previousBlock.nextBlock = this;}
+  }
+
+  Block nextBlock;
+
+  public Block getNextBlock() {
+    return nextBlock;
+  }
+
+  public void setNextBlock(Block nextBlock) {
+    if (this.nextBlock != null) {nextBlock.previousBlock = null;}
+    this.nextBlock = nextBlock;
+    if (this.nextBlock != null) {nextBlock.previousBlock = this;}
+  }
+  
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
