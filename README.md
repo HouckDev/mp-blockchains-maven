@@ -4,8 +4,8 @@ An exploration of blockchains in Java.
 
 Authors
 
-* Your name here.
-* Your name here.
+* Grant Sackmann.
+* Paden Houck.
 * Samuel A. Rebelsky (starter code)
 
 Acknowledgements
