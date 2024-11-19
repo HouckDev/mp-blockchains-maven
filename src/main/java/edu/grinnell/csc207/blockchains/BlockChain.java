@@ -3,6 +3,7 @@ package edu.grinnell.csc207.blockchains;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * A full blockchain.
@@ -146,12 +147,16 @@ public class BlockChain implements Iterable<Transaction> {
    */
   public Iterator<String> users() {
     return new Iterator<String>() {
+      int i = 0;
+      String[] userList = (String[]) calculateBalances().keySet().toArray();
       public boolean hasNext() {
-        return false; // STUB
+        return i < userList.length;
       } // hasNext()
 
       public String next() {
-        throw new NoSuchElementException(); // STUB
+        String temp = userList[i];
+        i++;
+        return temp;
       } // next()
     };
   } // users()
