@@ -118,7 +118,14 @@ public class BlockChain implements Iterable<Transaction> {
    * @return true if the blockchain is correct and false otherwise.
    */
   public boolean isCorrect() {
-    return true;        // STUB
+    Iterator<Block> blockIterator = this.blocks();
+    while (blockIterator.hasNext()) {
+      Block block = blockIterator.next();
+      if (block.getPrevHash() != block.getPreviousBlock().getHash()) {return false;}
+      if (block.getHash() != block.getPreviousBlock().calculateNewHash()) {return false;}
+      // STUB: Implement balance checks
+    }
+    return true;
   } // isCorrect()
 
   /**
