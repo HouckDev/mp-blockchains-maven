@@ -12,4 +12,4 @@ Acknowledgements
 
 * _Forthcoming_.
 
-This code may be found at <https://github.com/USERNAME/mp-blockchains-maven>. The original code may be found at <https://github.com/Grinnell-CSC207/mp-blockchinas-maven>.
+This code may be found at <https://github.com/HouckDev/mp-blockchains-maven>. The original code may be found at <https://github.com/Grinnell-CSC207/mp-blockchinas-maven>.

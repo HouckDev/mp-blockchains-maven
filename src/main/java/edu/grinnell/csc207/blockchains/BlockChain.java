@@ -13,6 +13,8 @@ public class BlockChain implements Iterable<Transaction> {
   // | Fields |
   // +--------+
 
+  Block rootBlock;
+
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
@@ -54,7 +56,13 @@ public class BlockChain implements Iterable<Transaction> {
    * @return the number of blocks in the chain, including the initial block.
    */
   public int getSize() {
-    return 2;   // STUB
+    Block current = this.rootBlock;
+    int count = 1;
+    while(current.getNextBlock() != null) {
+      current = current.getNextBlock();
+      count++;
+    }
+    return count;
   } // getSize()
 
   /**
