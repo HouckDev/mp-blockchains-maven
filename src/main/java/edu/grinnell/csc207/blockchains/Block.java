@@ -10,7 +10,12 @@ public class Block {
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
-
+  int num;
+  Transaction transaction;
+  Hash hash;
+  Hash preHash;
+  HashValidator check;
+  long nonce;
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
@@ -31,7 +36,10 @@ public class Block {
    */
   public Block(int num, Transaction transaction, Hash prevHash,
       HashValidator check) {
-    // STUB
+    this.num = num;
+    this.transaction = transaction;
+    this.preHash = prevHash;
+    // STUB: Mine the nonce
   } // Block(int, Transaction, Hash, HashValidator)
 
   /**
@@ -47,6 +55,10 @@ public class Block {
    *   The nonce of the block.
    */
   public Block(int num, Transaction transaction, Hash prevHash, long nonce) {
+    this.num = num;
+    this.transaction = transaction;
+    this.preHash = prevHash;
+    this.nonce = nonce;
     // STUB
   } // Block(int, Transaction, Hash, long)
 
@@ -72,7 +84,7 @@ public class Block {
    * @return the number of the block.
    */
   public int getNum() {
-    return 0;   // STUB
+    return this.num;
   } // getNum()
 
   /**
@@ -81,7 +93,7 @@ public class Block {
    * @return the transaction.
    */
   public Transaction getTransaction() {
-    return new Transaction("Here", "There", 0); // STUB
+    return this.transaction;
   } // getTransaction()
 
   /**
@@ -90,7 +102,7 @@ public class Block {
    * @return the nonce.
    */
   public long getNonce() {
-    return 0;   // STUB
+    return this.nonce;
   } // getNonce()
 
   /**
@@ -99,7 +111,7 @@ public class Block {
    * @return the hash of the previous block.
    */
   Hash getPrevHash() {
-    return new Hash(new byte[] {0});  // STUB
+    return this.preHash;
   } // getPrevHash
 
   /**
@@ -108,7 +120,7 @@ public class Block {
    * @return the hash of the current block.
    */
   Hash getHash() {
-    return new Hash(new byte[] {0});  // STUB
+    return this.hash;
   } // getHash
 
   /**
