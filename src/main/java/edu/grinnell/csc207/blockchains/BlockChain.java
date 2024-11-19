@@ -8,7 +8,8 @@ import java.util.Set;
 /**
  * A full blockchain.
  *
- * @author Your Name Here
+ * @author Paden Houck
+ * @author Grant Sackmann
  */
 public class BlockChain implements Iterable<Transaction> {
   // +--------+------------------------------------------------------
