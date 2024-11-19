@@ -103,11 +103,7 @@ public class Block {
    * Compute the hash of the block given all the other info already stored in the block.
    */
   public void computeHash() {
-    try {
-      this.hash = this.calculateHash();
-    } catch (NoSuchAlgorithmException e) {
-      // do nothing
-    } // try-catch
+    this.hash = this.calculateHash();
   } // computeHash()
 
   /**
@@ -115,7 +111,7 @@ public class Block {
    *
    * @return computed Hash
    */
-  public Hash calculateHash() throws NoSuchAlgorithmException {
+  public Hash calculateHash() {
     ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
     byteStream.write((byte) num);
@@ -130,8 +126,8 @@ public class Block {
 //  Using Message digest to produce hash
     try {
       MessageDigest md = MessageDigest.getInstance("sha-256");
-      byte[] byteHash = md.digest(byteStream.toByteArray());
-      return new Hash(byteHash);
+      md.update(byteStream.toByteArray());
+      return new Hash(md.digest());
     } catch (NoSuchAlgorithmException e) {
       // do nothing
     } // try-catch
