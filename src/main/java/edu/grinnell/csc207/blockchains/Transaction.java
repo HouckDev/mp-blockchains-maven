@@ -1,5 +1,7 @@
 package edu.grinnell.csc207.blockchains;
 
+import java.io.ByteArrayOutputStream;
+
 /**
  * A simple transaction.
  *
@@ -129,4 +131,14 @@ public class Transaction {
         && other.target.equals(this.target)
         && other.amount == this.amount;
   } // equals(Transaction)
+
+  public byte[] getBytes(){
+    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+
+    byteStream.writeBytes(this.source.getBytes());
+    byteStream.writeBytes(this.target.getBytes());
+    byteStream.write((byte)amount);
+
+    return byteStream.toByteArray();
+  }
 } // class Transaction
