@@ -34,7 +34,7 @@ public class BlockChain implements Iterable<Transaction> {
   // +---------+
   public Block getLastBlock() {
     Block current = this.rootBlock;
-    
+
     while(current.getNextBlock() != null) {
       current = current.getNextBlock();
     }
@@ -95,7 +95,9 @@ public class BlockChain implements Iterable<Transaction> {
    *   is removed).
    */
   public boolean removeLast() {
-    return true;        // STUB
+    if (this.rootBlock == this.getLastBlock()) {return false;}
+    this.getLastBlock().getPreviousBlock().setNextBlock(null);;
+    return true;
   } // removeLast()
 
   /**
