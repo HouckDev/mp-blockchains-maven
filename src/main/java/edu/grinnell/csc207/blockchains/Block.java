@@ -12,7 +12,7 @@ public class Block {
   // +--------+
   // Meta data
   int num;
-  
+
   // Block data
   Transaction transaction;
   Hash hash;
@@ -22,14 +22,19 @@ public class Block {
 
   // Connection data
   Block previousBlock;
+
   public Block getPreviousBlock() {
     return previousBlock;
   }
 
   public void setPreviousBlock(Block previousBlock) {
-    if (this.previousBlock != null) {previousBlock.nextBlock = null;}
+    if (this.previousBlock != null) {
+      previousBlock.nextBlock = null;
+    }
     this.previousBlock = previousBlock;
-    if (this.previousBlock != null) {previousBlock.nextBlock = this;}
+    if (this.previousBlock != null) {
+      previousBlock.nextBlock = this;
+    }
   }
 
   Block nextBlock;
@@ -39,31 +44,29 @@ public class Block {
   }
 
   public void setNextBlock(Block nextBlock) {
-    if (this.nextBlock != null) {nextBlock.previousBlock = null;}
+    if (this.nextBlock != null) {
+      nextBlock.previousBlock = null;
+    }
     this.nextBlock = nextBlock;
-    if (this.nextBlock != null) {nextBlock.previousBlock = this;}
+    if (this.nextBlock != null) {
+      nextBlock.previousBlock = this;
+    }
   }
-  
+
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
 
   /**
-   * Create a new block from the specified block number, transaction, and
-   * previous hash, mining to choose a nonce that meets the requirements
-   * of the validator.
+   * Create a new block from the specified block number, transaction, and previous hash, mining to
+   * choose a nonce that meets the requirements of the validator.
    *
-   * @param num
-   *   The number of the block.
-   * @param transaction
-   *   The transaction for the block.
-   * @param prevHash
-   *   The hash of the previous block.
-   * @param check
-   *   The validator used to check the block.
+   * @param num The number of the block.
+   * @param transaction The transaction for the block.
+   * @param prevHash The hash of the previous block.
+   * @param check The validator used to check the block.
    */
-  public Block(int num, Transaction transaction, Hash prevHash,
-      HashValidator check) {
+  public Block(int num, Transaction transaction, Hash prevHash, HashValidator check) {
     this.num = num;
     this.transaction = transaction;
     this.preHash = prevHash;
@@ -74,14 +77,10 @@ public class Block {
   /**
    * Create a new block, computing the hash for the block.
    *
-   * @param num
-   *   The number of the block.
-   * @param transaction
-   *   The transaction for the block.
-   * @param prevHash
-   *   The hash of the previous block.
-   * @param nonce
-   *   The nonce of the block.
+   * @param num The number of the block.
+   * @param transaction The transaction for the block.
+   * @param prevHash The hash of the previous block.
+   * @param nonce The nonce of the block.
    */
   public Block(int num, Transaction transaction, Hash prevHash, long nonce) {
     this.num = num;
@@ -96,8 +95,7 @@ public class Block {
   // +---------+
 
   /**
-   * Compute the hash of the block given all the other info already
-   * stored in the block.
+   * Compute the hash of the block given all the other info already stored in the block.
    */
   static void computeHash() {
     // STUB
@@ -158,6 +156,16 @@ public class Block {
    * @return a string representation of the block.
    */
   public String toString() {
-    return "";  // STUB
+    if (getTransaction().getSource().isEmpty()) {
+      return String.format(
+          "Block <num> (Transaction: [Deposit Target <target>, Amount: <amt>], Nonce: <nonce>, prevHash: <prevHash>, hash: <hash>)",
+          getNum(), getTransaction().getTarget(),
+          getTransaction().getAmount(), getNonce(), getPrevHash(), getHash());
+    } else {
+      return String.format(
+          "Block <num> (Transaction: [Source: <source>, Target <target>, Amount: <amt>], Nonce: <nonce>, prevHash: <prevHash>, hash: <hash>)",
+          getNum(), getTransaction().getSource(), getTransaction().getTarget(),
+          getTransaction().getAmount(), getNonce(), getPrevHash(), getHash());
+    }
   } // toString()
 } // class Block
