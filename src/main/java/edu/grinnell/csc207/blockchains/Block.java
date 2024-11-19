@@ -1,5 +1,9 @@
 package edu.grinnell.csc207.blockchains;
 
+import java.io.ByteArrayOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * Blocks to be stored in blockchains.
  *
@@ -7,6 +11,7 @@ package edu.grinnell.csc207.blockchains;
  * @author Samuel A. Rebelsky
  */
 public class Block {
+
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
@@ -61,10 +66,10 @@ public class Block {
    * Create a new block from the specified block number, transaction, and previous hash, mining to
    * choose a nonce that meets the requirements of the validator.
    *
-   * @param num The number of the block.
+   * @param num         The number of the block.
    * @param transaction The transaction for the block.
-   * @param prevHash The hash of the previous block.
-   * @param check The validator used to check the block.
+   * @param prevHash    The hash of the previous block.
+   * @param check       The validator used to check the block.
    */
   public Block(int num, Transaction transaction, Hash prevHash, HashValidator check) {
     this.num = num;
@@ -77,10 +82,10 @@ public class Block {
   /**
    * Create a new block, computing the hash for the block.
    *
-   * @param num The number of the block.
+   * @param num         The number of the block.
    * @param transaction The transaction for the block.
-   * @param prevHash The hash of the previous block.
-   * @param nonce The nonce of the block.
+   * @param prevHash    The hash of the previous block.
+   * @param nonce       The nonce of the block.
    */
   public Block(int num, Transaction transaction, Hash prevHash, long nonce) {
     this.num = num;
@@ -97,9 +102,42 @@ public class Block {
   /**
    * Compute the hash of the block given all the other info already stored in the block.
    */
-  static void computeHash() {
-    // STUB
+  public void computeHash() {
+    try {
+      this.hash = this.calculateHash();
+    } catch (NoSuchAlgorithmException e) {
+      // do nothing
+    } // try-catch
   } // computeHash()
+
+  /**
+   * Returns the calculates the has of the current block.
+   *
+   * @return computed Hash
+   */
+  public Hash calculateHash() throws NoSuchAlgorithmException {
+    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+
+    byteStream.write((byte) num);
+    byteStream.writeBytes(transaction.getBytes());
+    byteStream.writeBytes(preHash.getBytes());
+    byteStream.write((byte) nonce);
+
+    if (previousBlock != null) {
+      byteStream.writeBytes(previousBlock.getHash().getBytes());
+    } // if
+
+//  Using Message digest to produce hash
+    try {
+      MessageDigest md = MessageDigest.getInstance("sha-256");
+      byte[] byteHash = md.digest(byteStream.toByteArray());
+      return new Hash(byteHash);
+    } catch (NoSuchAlgorithmException e) {
+      // do nothing
+    } // try-catch
+
+    return null;
+  } // calculateHash()
 
   // +---------+-----------------------------------------------------
   // | Methods |
