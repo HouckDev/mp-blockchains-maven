@@ -68,6 +68,7 @@ public class Block {
     this.transaction = transaction;
     this.preHash = prevHash;
     // STUB: Mine the nonce
+    computeHash();
   } // Block(int, Transaction, Hash, HashValidator)
 
   /**
@@ -87,7 +88,7 @@ public class Block {
     this.transaction = transaction;
     this.preHash = prevHash;
     this.nonce = nonce;
-    // STUB
+    computeHash();
   } // Block(int, Transaction, Hash, long)
 
   // +---------+-----------------------------------------------------
