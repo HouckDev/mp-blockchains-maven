@@ -1,5 +1,6 @@
 package edu.grinnell.csc207.blockchains;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -113,7 +114,7 @@ public class BlockChain implements Iterable<Transaction> {
    * @return true if the blockchain is correct and false otherwise.
    */
   public boolean isCorrect() {
-    Iterator<Block> blockIterator = this.blocks(rootBlock);
+    Iterator<Block> blockIterator = this.blocks();
     while (blockIterator.hasNext()) {
       Block block = blockIterator.next();
       if (block.getPrevHash() != block.getPreviousBlock().getHash()) {
@@ -163,17 +164,41 @@ public class BlockChain implements Iterable<Transaction> {
    * @return that user's balance (or 0, if the user is not in the system).
    */
   public int balance(String user) {
-    return 0; // STUB
+    if (calculateBalances().containsKey(user)) {
+      return calculateBalances().get(user);
+    } // if
+    return 0;
   } // balance()
+
+  public HashMap<String, Integer> calculateBalances() {
+    HashMap<String, Integer> runningBalances = new HashMap<String, Integer>();
+    Iterator<Block> blockIterator = this.blocks();
+    while (blockIterator.hasNext()) {
+      Block block = blockIterator.next();
+      if (block.getTransaction().getSource().isEmpty()) {
+        runningBalances.put(block.getTransaction().getTarget(),
+            runningBalances.get(block.getTransaction().getTarget())
+                + block.getTransaction().getAmount());
+      } else {
+        runningBalances.put(block.getTransaction().getTarget(),
+            runningBalances.get(block.getTransaction().getTarget())
+                + block.getTransaction().getAmount());
+        runningBalances.put(block.getTransaction().getSource(),
+            runningBalances.get(block.getTransaction().getSource())
+                - block.getTransaction().getAmount());
+      } // if else
+    } // while
+    return runningBalances;
+  } // calculateBalances
 
   /**
    * Get an interator for all the blocks in the chain.
    *
    * @return an iterator for all the blocks in the chain.
    */
-  public Iterator<Block> blocks(Block startBlock) {
+  public Iterator<Block> blocks() {
     return new Iterator<Block>() {
-      Block currentBlock = startBlock;
+      Block currentBlock = rootBlock;
 
       public boolean hasNext() {
         if (currentBlock.getNextBlock() == null) {
@@ -197,12 +222,19 @@ public class BlockChain implements Iterable<Transaction> {
    */
   public Iterator<Transaction> iterator() {
     return new Iterator<Transaction>() {
+      Block currentBlock = rootBlock;
+
       public boolean hasNext() {
-        return false; // STUB
+        if (currentBlock.getNextBlock() == null) {
+          return false;
+        }
+        return true;
       } // hasNext()
 
       public Transaction next() {
-        throw new NoSuchElementException(); // STUB
+        Block temp = currentBlock;
+        currentBlock = currentBlock.getNextBlock();
+        return temp.getTransaction();
       } // next()
     };
   } // iterator()
