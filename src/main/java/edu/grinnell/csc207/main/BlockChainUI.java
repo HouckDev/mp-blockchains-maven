@@ -130,7 +130,12 @@ public class BlockChainUI {
           break;
 
         case "check":
-          pen.printf("Command '%s' is not yet implemented", command);
+          try {
+            chain.check();
+            pen.println("The blockchain checks out.");
+          } catch (Exception e) {
+            pen.println("The blockchain does not check out.");
+          }
           break;
 
         case "help":
