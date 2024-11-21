@@ -116,11 +116,17 @@ public class BlockChainUI {
           break;
 
         case "balance":
-          pen.printf("Command '%s' is not yet implemented", command);
+          source = IOUtils.readLine(pen, eyes, "User: ");
+          pen.printf("> '%s' : '%s'", source, chain.balance(source));
           break;
 
         case "blocks":
-          pen.printf("Command '%s' is not yet implemented", command);
+        Iterator<Block> blockIterator = chain.blocks();
+        pen.printf("Blocks");
+        while (blockIterator.hasNext()) {
+          Block block = (Block) blockIterator.next();
+          pen.printf(block.toString());
+        }
           break;
 
         case "check":
@@ -148,11 +154,11 @@ public class BlockChainUI {
           break;
 
         case "transactions":
-          Iterator<Block> blockIterator = chain.blocks();
+          Iterator<Block> transactionIterator = chain.blocks();
           pen.printf("Transactions");
-          while (blockIterator.hasNext()) {
-            Block block = (Block) blockIterator.next();
-            pen.printf("> '%s' : '%b'", 0, block.getTransaction().toString());
+          while (transactionIterator.hasNext()) {
+            Block block = (Block) transactionIterator.next();
+            pen.printf("> '%s' : '%s'", 0, block.getTransaction().toString());
           }
           break;
 
@@ -161,7 +167,7 @@ public class BlockChainUI {
           pen.printf("Users");
           while (userIterator.hasNext()) {
             String cUser = (String) userIterator.next();
-            pen.printf("> '%s' : '%b'", cUser, chain.balance(cUser));
+            pen.printf("> '%s' : '%s'", cUser, chain.balance(cUser));
           }
           break;
 
