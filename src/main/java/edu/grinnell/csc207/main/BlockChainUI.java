@@ -2,6 +2,7 @@ package edu.grinnell.csc207.main;
 
 import edu.grinnell.csc207.blockchains.Block;
 import edu.grinnell.csc207.blockchains.BlockChain;
+import edu.grinnell.csc207.blockchains.Hash;
 import edu.grinnell.csc207.blockchains.HashValidator;
 import edu.grinnell.csc207.blockchains.Transaction;
 
@@ -86,6 +87,8 @@ public class BlockChainUI {
     String source;
     String target;
     int amount;
+    int nonce;
+    Block b;
 
     while (!done) {
       pen.print("\nCommand: ");
@@ -97,7 +100,19 @@ public class BlockChainUI {
 
       switch (command.toLowerCase()) {
         case "append":
-          pen.printf("Command '%s' is not yet implemented", command);
+          source = IOUtils.readLine(pen, eyes, "Source (return for deposit): ");
+          target = IOUtils.readLine(pen, eyes, "Target: ");
+          amount = IOUtils.readInt(pen, eyes, "Amount: ");
+          nonce = IOUtils.readInt(pen, eyes, "Nonce: ");
+          if (chain.getLastBlock() == null) {
+            b = new Block(chain.getSize(), new Transaction(source, target, amount),
+                new Hash(null), nonce);
+          } else {
+            b = new Block(chain.getSize(), new Transaction(source, target, amount),
+                chain.getLastBlock().getHash(), nonce);
+          }
+          chain.append(b);
+          pen.println("Appended: " + b.toString());
           break;
 
         case "balance":
@@ -120,7 +135,7 @@ public class BlockChainUI {
           source = IOUtils.readLine(pen, eyes, "Source (return for deposit): ");
           target = IOUtils.readLine(pen, eyes, "Target: ");
           amount = IOUtils.readInt(pen, eyes, "Amount: ");
-          Block b = chain.mine(new Transaction(source, target, amount));
+          b = chain.mine(new Transaction(source, target, amount));
           pen.println("Nonce: " + b.getNonce());
           break;
 

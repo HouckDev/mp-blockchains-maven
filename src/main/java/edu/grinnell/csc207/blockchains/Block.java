@@ -171,7 +171,7 @@ public class Block {
    *
    * @return the hash of the previous block.
    */
-  Hash getPrevHash() {
+  public Hash getPrevHash() {
     return this.preHash;
   } // getPrevHash
 
@@ -180,7 +180,7 @@ public class Block {
    *
    * @return the hash of the current block.
    */
-  Hash getHash() {
+  public Hash getHash() {
     return this.hash;
   } // getHash
 
