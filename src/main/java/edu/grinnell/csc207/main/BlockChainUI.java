@@ -131,7 +131,7 @@ public class BlockChainUI {
           break;
 
         case "remove":
-          pen.printf("Command '%s' is not yet implemented", command);
+          chain.removeLast();
           break;
 
         case "transactions":

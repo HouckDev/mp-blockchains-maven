@@ -55,7 +55,7 @@ public class BlockChain implements Iterable<Transaction> {
    * @return a new block with correct number, hashes, and such.
    */
   public Block mine(Transaction t) {
-    return new Block(getSize(), t, getLastBlock().getHash(),check);
+    return new Block(getSize(), t, getLastBlock().getHash(), check);
   } // mine(Transaction)
 
   /**
@@ -82,7 +82,7 @@ public class BlockChain implements Iterable<Transaction> {
    *         for the contents, or (c) the previous hash is incorrect.
    */
   public void append(Block blk) {
-    if ( getLastBlock() != null && blk.getPrevHash() != getLastBlock().getHash()) {
+    if (getLastBlock() != null && blk.getPrevHash() != getLastBlock().getHash()) {
       throw new IllegalArgumentException();
     }
     if (blk.getHash() != blk.calculateHash()) {
@@ -129,7 +129,8 @@ public class BlockChain implements Iterable<Transaction> {
     Iterator<Block> blockIterator = this.blocks();
     while (blockIterator.hasNext()) {
       Block block = blockIterator.next();
-      if (block.getPreviousBlock() != null && block.getPrevHash() != block.getPreviousBlock().getHash()) {
+      if (block.getPreviousBlock() != null
+          && block.getPrevHash() != block.getPreviousBlock().getHash()) {
         return false;
       }
       if (block.getPreviousBlock() != null && block.getHash() != block.calculateHash()) {
@@ -160,6 +161,7 @@ public class BlockChain implements Iterable<Transaction> {
     return new Iterator<String>() {
       int i = 0;
       String[] userList = (String[]) calculateBalances().keySet().toArray();
+
       public boolean hasNext() {
         return i < userList.length;
       } // hasNext()
