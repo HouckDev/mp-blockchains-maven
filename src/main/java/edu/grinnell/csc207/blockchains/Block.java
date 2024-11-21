@@ -75,8 +75,13 @@ public class Block {
     this.num = num;
     this.transaction = transaction;
     this.preHash = prevHash;
+    this.nonce = 0;
     // STUB: Mine the nonce
+    while (!check.isValid(calculateHash())) {
+      this.nonce += 1;
+    }
     computeHash();
+    
   } // Block(int, Transaction, Hash, HashValidator)
 
   /**
