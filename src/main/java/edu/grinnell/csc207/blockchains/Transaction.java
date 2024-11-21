@@ -141,4 +141,8 @@ public class Transaction {
 
     return byteStream.toByteArray();
   }
+
+  public String appendAllString(){
+    return this.source + this.target + Integer.toString(amount);
+  }
 } // class Transaction
