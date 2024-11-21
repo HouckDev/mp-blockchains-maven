@@ -64,6 +64,7 @@ public class BlockChain implements Iterable<Transaction> {
    * @return the number of blocks in the chain, including the initial block.
    */
   public int getSize() {
+    if (this.rootBlock == null) {return 0;}
     Block current = this.rootBlock;
     int count = 1;
     while (current.getNextBlock() != null) {
@@ -160,14 +161,14 @@ public class BlockChain implements Iterable<Transaction> {
   public Iterator<String> users() {
     return new Iterator<String>() {
       int i = 0;
-      String[] userList = (String[]) calculateBalances().keySet().toArray();
+      Object[] userList = calculateBalances().keySet().toArray();
 
       public boolean hasNext() {
         return i < userList.length;
       } // hasNext()
 
       public String next() {
-        String temp = userList[i];
+        String temp = (String) userList[i];
         i++;
         return temp;
       } // next()
@@ -219,7 +220,7 @@ public class BlockChain implements Iterable<Transaction> {
       Block currentBlock = rootBlock;
 
       public boolean hasNext() {
-        if (currentBlock.getNextBlock() == null) {
+        if (currentBlock == null || currentBlock.getNextBlock() == null) {
           return false;
         }
         return true;
