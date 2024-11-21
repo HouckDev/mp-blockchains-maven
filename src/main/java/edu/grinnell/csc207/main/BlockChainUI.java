@@ -8,6 +8,7 @@ import edu.grinnell.csc207.blockchains.Transaction;
 import edu.grinnell.csc207.util.IOUtils;
 
 import java.io.PrintWriter;
+import java.util.Iterator;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -139,7 +140,12 @@ public class BlockChainUI {
           break;
 
         case "users":
-          pen.printf("Command '%s' is not yet implemented", command);
+          Iterator userIterator = chain.users();
+          pen.printf("Users");
+          while (userIterator.hasNext()) {
+            String cUser = (String) userIterator.next();
+            pen.printf("> '%s' : '%b'", cUser,chain.balance(cUser));
+          }
           break;
 
         default:
