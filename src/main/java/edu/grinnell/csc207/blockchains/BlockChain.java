@@ -55,7 +55,9 @@ public class BlockChain implements Iterable<Transaction> {
    * @return a new block with correct number, hashes, and such.
    */
   public Block mine(Transaction t) {
-    if (getLastBlock() == null) {return new Block(getSize(), t, new Hash(new byte[]{}), check);}
+    if (getLastBlock() == null) {
+      return new Block(getSize(), t, new Hash(new byte[] {}), check);
+    }
     return new Block(getSize(), t, getLastBlock().getHash(), check);
   } // mine(Transaction)
 
@@ -65,7 +67,9 @@ public class BlockChain implements Iterable<Transaction> {
    * @return the number of blocks in the chain, including the initial block.
    */
   public int getSize() {
-    if (this.rootBlock == null) {return 0;}
+    if (this.rootBlock == null) {
+      return 0;
+    }
     Block current = this.rootBlock;
     int count = 1;
     while (current.getNextBlock() != null) {
@@ -84,6 +88,9 @@ public class BlockChain implements Iterable<Transaction> {
    *         for the contents, or (c) the previous hash is incorrect.
    */
   public void append(Block blk) {
+    if (!check.isValid(blk.getHash())) {
+      throw new IllegalArgumentException();
+    }
     if (getLastBlock() != null && !blk.getPrevHash().equals(getLastBlock().getHash())) {
       throw new IllegalArgumentException();
     }
@@ -107,7 +114,7 @@ public class BlockChain implements Iterable<Transaction> {
     if (this.rootBlock == this.getLastBlock()) {
       return false;
     }
-    this.getLastBlock().getPreviousBlock().setNextBlock(null);;
+    this.getLastBlock().getPreviousBlock().nextBlock = null;
     return true;
   } // removeLast()
 
@@ -131,13 +138,17 @@ public class BlockChain implements Iterable<Transaction> {
     Iterator<Block> blockIterator = this.blocks();
     while (blockIterator.hasNext()) {
       Block block = blockIterator.next();
+      if (!check.isValid(block.getHash())) {
+        return false;
+      }
       if (block.getPreviousBlock() != null
-          && block.getPrevHash() != block.getPreviousBlock().getHash()) {
+          && !block.getPrevHash().equals(block.getPreviousBlock().getHash())) {
         return false;
       }
-      if (block.getPreviousBlock() != null && block.getHash() != block.calculateHash()) {
+      if (!block.getHash().equals(block.calculateHash())) {
         return false;
       }
+      
       // STUB: Implement balance checks
     }
     return true;
@@ -151,7 +162,9 @@ public class BlockChain implements Iterable<Transaction> {
    * @throws Exception If things are wrong at any block.
    */
   public void check() throws Exception {
-    if (!isCorrect()) {throw new Exception();}
+    if (!isCorrect()) {
+      throw new Exception();
+    }
 
   } // check()
 

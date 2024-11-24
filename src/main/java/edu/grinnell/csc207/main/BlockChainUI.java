@@ -27,7 +27,7 @@ public class BlockChainUI {
   /**
    * The number of bytes we validate. Should be set to 3 before submitting.
    */
-  static final int VALIDATOR_BYTES = 0;
+  static final int VALIDATOR_BYTES = 1;
 
   // +---------+-----------------------------------------------------
   // | Helpers |
@@ -111,8 +111,12 @@ public class BlockChainUI {
             b = new Block(chain.getSize(), new Transaction(source, target, amount),
                 chain.getLastBlock().getHash(), nonce);
           }
-          chain.append(b);
-          pen.println("Appended: " + b.toString());
+          try {
+            chain.append(b);
+            pen.println("Appended: " + b.toString());
+          } catch (Exception e) {
+            pen.println("Could not append: Invalid hash in appended block: " + b.getHash().toString());
+          }
           break;
 
         case "balance":
