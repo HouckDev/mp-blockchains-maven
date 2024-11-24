@@ -22,20 +22,6 @@ public class BlockChain implements Iterable<Transaction> {
   Block rootBlock;
   HashValidator check;
 
-  /**
-   * The message digest used to compute hashes.
-   */
-  static MessageDigest md = null;
-
-  /**
-   * The byte buffer used for ints.
-   */
-  static ByteBuffer intBuffer = ByteBuffer.allocate(Integer.BYTES);
-
-  /**
-   * The byte buffer used for longs.
-   */
-  static ByteBuffer longBuffer = ByteBuffer.allocate(Long.BYTES);
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
@@ -48,11 +34,6 @@ public class BlockChain implements Iterable<Transaction> {
    */
   public BlockChain(HashValidator check) {
     this.check = check;
-    try {
-      this.md = MessageDigest.getInstance("sha-256");
-    } catch (NoSuchAlgorithmException e) {
-      throw new NoSuchElementException("Cannot instantiate sha-256");
-    } // try-catch
   } // BlockChain(HashValidator)
 
   // +---------+-----------------------------------------------------

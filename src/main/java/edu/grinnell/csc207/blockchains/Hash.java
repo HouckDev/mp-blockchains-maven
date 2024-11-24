@@ -29,7 +29,7 @@ public class Hash {
    * @param data The data to copy into the hash.
    */
   public Hash(byte[] data) {
-    this.hashData = data;
+    this.hashData = data.clone();
   } // Hash(byte[])
 
   // +---------+-----------------------------------------------------
@@ -61,7 +61,7 @@ public class Hash {
    * @return a copy of the bytes in the hash.
    */
   public byte[] getBytes() {
-    return hashData;
+    return hashData.clone();
   } // getBytes()
 
   /**
@@ -70,7 +70,7 @@ public class Hash {
    * @return the hash as a hex string.
    */
   public String toString() {
-    return HexFormat.of().formatHex(hashData);
+    return HexFormat.of().formatHex(hashData).toUpperCase();
   } // toString()
 
   /**

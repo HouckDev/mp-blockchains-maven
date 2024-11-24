@@ -27,7 +27,7 @@ public class BlockChainUI {
   /**
    * The number of bytes we validate. Should be set to 3 before submitting.
    */
-  static final int VALIDATOR_BYTES = 1;
+  static final int VALIDATOR_BYTES = 3;
 
   // +---------+-----------------------------------------------------
   // | Helpers |

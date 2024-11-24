@@ -1,8 +1,10 @@
 package edu.grinnell.csc207.blockchains;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.NoSuchElementException;
 
 /**
  * Blocks to be stored in blockchains.
@@ -12,6 +14,31 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Block {
 
+  /**
+   * The message digest used to compute hashes.
+   */
+  static MessageDigest md = null;
+
+  /**
+   * The byte buffer used for ints.
+   */
+  static ByteBuffer intBuffer = null;
+
+  /**
+   * The byte buffer used for longs.
+   */
+  static ByteBuffer longBuffer = null;
+
+  static void trySetup() {
+    if (md != null) {return;}
+    try {
+      Block.md = MessageDigest.getInstance("sha-256");
+    } catch (NoSuchAlgorithmException e) {
+      throw new NoSuchElementException("Cannot instantiate sha-256");
+    } // try-catch
+    Block.intBuffer = ByteBuffer.allocate(Integer.BYTES);
+    Block.longBuffer = ByteBuffer.allocate(Long.BYTES);
+  }
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
@@ -73,6 +100,8 @@ public class Block {
    * @param check       The validator used to check the block.
    */
   public Block(int num, Transaction transaction, Hash prevHash, HashValidator check) {
+    trySetup();
+
     this.num = num;
     this.transaction = transaction;
     this.preHash = prevHash;
@@ -94,6 +123,8 @@ public class Block {
    * @param nonce       The nonce of the block.
    */
   public Block(int num, Transaction transaction, Hash prevHash, long nonce) {
+    trySetup();
+
     this.num = num;
     this.transaction = transaction;
     this.preHash = prevHash;
@@ -118,14 +149,14 @@ public class Block {
    * @return computed Hash
    */
   public Hash calculateHash() {
-    BlockChain.md.reset();
-    BlockChain.md.update(intToBytes(this.getNum()));
-    BlockChain.md.update(this.getTransaction().getSource().getBytes());
-    BlockChain.md.update(this.getTransaction().getTarget().getBytes());
-    BlockChain.md.update(intToBytes(this.getTransaction().getAmount()));
-    BlockChain.md.update(this.getPrevHash().getBytes());
-    BlockChain.md.update(longToBytes(this.getNonce()));
-    return new Hash(BlockChain.md.digest());
+    Block.md.reset();
+    Block.md.update(intToBytes(this.getNum()));
+    Block.md.update(this.getTransaction().getSource().getBytes());
+    Block.md.update(this.getTransaction().getTarget().getBytes());
+    Block.md.update(intToBytes(this.getTransaction().getAmount()));
+    Block.md.update(this.getPrevHash().getBytes());
+    Block.md.update(longToBytes(this.getNonce()));
+    return new Hash(Block.md.digest());
   } // calculateHash()
 
   // +---------+-----------------------------------------------------
@@ -203,8 +234,8 @@ public class Block {
    * @return The bytes of that integer.
    */
   static byte[] intToBytes(int i) {
-    BlockChain.intBuffer.clear();
-    return BlockChain.intBuffer.putInt(i).array();
+    Block.intBuffer.clear();
+    return Block.intBuffer.putInt(i).array();
   } // intToBytes(int)
 
   /**
@@ -214,7 +245,7 @@ public class Block {
    * @return The bytes in that long.
    */
   static byte[] longToBytes(long l) {
-    BlockChain.longBuffer.clear();
-    return BlockChain.longBuffer.putLong(l).array();
+    Block.longBuffer.clear();
+    return Block.longBuffer.putLong(l).array();
   } // longToBytes()
 } // class Block
