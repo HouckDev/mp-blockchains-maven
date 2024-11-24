@@ -81,7 +81,7 @@ public class Block {
       this.nonce += 1;
     }
     computeHash();
-    
+
   } // Block(int, Transaction, Hash, HashValidator)
 
   /**
@@ -108,7 +108,7 @@ public class Block {
    * Compute the hash of the block given all the other info already stored in the block.
    */
   public void computeHash() {
-    this.hash = this.calculateHash();
+    this.hash = calculateHash();
   } // computeHash()
 
   /**
@@ -117,27 +117,14 @@ public class Block {
    * @return computed Hash
    */
   public Hash calculateHash() {
-    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-
-    byteStream.write((byte) num);
-    byteStream.writeBytes(transaction.getBytes());
-    byteStream.writeBytes(preHash.getBytes());
-    byteStream.write((byte) nonce);
-
-    if (previousBlock != null) {
-      byteStream.writeBytes(previousBlock.getHash().getBytes());
-    } // if
-
-//  Using Message digest to produce hash
-    try {
-      MessageDigest md = MessageDigest.getInstance("sha-256");
-      md.update(byteStream.toByteArray());
-      return new Hash(md.digest());
-    } catch (NoSuchAlgorithmException e) {
-      // do nothing
-    } // try-catch
-
-    return null;
+    BlockChain.md.reset();
+    BlockChain.md.update(intToBytes(this.getNum()));
+    BlockChain.md.update(this.getTransaction().getSource().getBytes());
+    BlockChain.md.update(this.getTransaction().getTarget().getBytes());
+    BlockChain.md.update(intToBytes(this.getTransaction().getAmount()));
+    BlockChain.md.update(this.getPrevHash().getBytes());
+    BlockChain.md.update(longToBytes(this.getNonce()));
+    return new Hash(BlockChain.md.digest());
   } // calculateHash()
 
   // +---------+-----------------------------------------------------
@@ -207,4 +194,26 @@ public class Block {
           getTransaction().getAmount(), getNonce(), getPrevHash(), getHash());
     }
   } // toString()
+
+  /**
+   * Convert an integer into its bytes.
+   *
+   * @param i The integer to convert.
+   * @return The bytes of that integer.
+   */
+  static byte[] intToBytes(int i) {
+    BlockChain.intBuffer.clear();
+    return BlockChain.intBuffer.putInt(i).array();
+  } // intToBytes(int)
+
+  /**
+   * Convert a long into its bytes.
+   *
+   * @param l The long to convert.
+   * @return The bytes in that long.
+   */
+  static byte[] longToBytes(long l) {
+    BlockChain.longBuffer.clear();
+    return BlockChain.longBuffer.putLong(l).array();
+  } // longToBytes()
 } // class Block

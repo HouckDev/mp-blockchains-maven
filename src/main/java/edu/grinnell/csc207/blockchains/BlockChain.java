@@ -1,5 +1,8 @@
 package edu.grinnell.csc207.blockchains;
 
+import java.nio.ByteBuffer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -18,6 +21,21 @@ public class BlockChain implements Iterable<Transaction> {
 
   Block rootBlock;
   HashValidator check;
+
+  /**
+   * The message digest used to compute hashes.
+   */
+  static MessageDigest md = null;
+
+  /**
+   * The byte buffer used for ints.
+   */
+  static ByteBuffer intBuffer = ByteBuffer.allocate(Integer.BYTES);
+
+  /**
+   * The byte buffer used for longs.
+   */
+  static ByteBuffer longBuffer = ByteBuffer.allocate(Long.BYTES);
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
@@ -29,6 +47,11 @@ public class BlockChain implements Iterable<Transaction> {
    */
   public BlockChain(HashValidator check) {
     this.check = check;
+    try {
+      this.md = MessageDigest.getInstance("sha-256");
+    } catch (NoSuchAlgorithmException e) {
+      throw new NoSuchElementException("Cannot instantiate sha-256");
+    } // try-catch
   } // BlockChain(HashValidator)
 
   // +---------+-----------------------------------------------------
@@ -51,11 +74,12 @@ public class BlockChain implements Iterable<Transaction> {
    * Mine for a new valid block for the end of the chain, returning that block.
    *
    * @param t The transaction that goes in the block.
-   *
    * @return a new block with correct number, hashes, and such.
    */
   public Block mine(Transaction t) {
-    if (getLastBlock() == null) {return new Block(getSize(), t, new Hash(new byte[]{}), check);}
+    if (getLastBlock() == null) {
+      return new Block(getSize(), t, new Hash(new byte[]{}), check);
+    }
     return new Block(getSize(), t, getLastBlock().getHash(), check);
   } // mine(Transaction)
 
@@ -65,7 +89,9 @@ public class BlockChain implements Iterable<Transaction> {
    * @return the number of blocks in the chain, including the initial block.
    */
   public int getSize() {
-    if (this.rootBlock == null) {return 0;}
+    if (this.rootBlock == null) {
+      return 0;
+    }
     Block current = this.rootBlock;
     int count = 1;
     while (current.getNextBlock() != null) {
@@ -79,9 +105,8 @@ public class BlockChain implements Iterable<Transaction> {
    * Add a block to the end of the chain.
    *
    * @param blk The block to add to the end of the chain.
-   *
    * @throws IllegalArgumentException if (a) the hash is not valid, (b) the hash is not appropriate
-   *         for the contents, or (c) the previous hash is incorrect.
+   *                                  for the contents, or (c) the previous hash is incorrect.
    */
   public void append(Block blk) {
     if (getLastBlock() != null && !blk.getPrevHash().equals(getLastBlock().getHash())) {
@@ -101,13 +126,14 @@ public class BlockChain implements Iterable<Transaction> {
    * Attempt to remove the last block from the chain.
    *
    * @return false if the chain has only one block (in which case it's not removed) or true
-   *         otherwise (in which case the last block is removed).
+   * otherwise (in which case the last block is removed).
    */
   public boolean removeLast() {
     if (this.rootBlock == this.getLastBlock()) {
       return false;
     }
-    this.getLastBlock().getPreviousBlock().setNextBlock(null);;
+    this.getLastBlock().getPreviousBlock().setNextBlock(null);
+    ;
     return true;
   } // removeLast()
 
@@ -151,7 +177,9 @@ public class BlockChain implements Iterable<Transaction> {
    * @throws Exception If things are wrong at any block.
    */
   public void check() throws Exception {
-    if (!isCorrect()) {throw new Exception();}
+    if (!isCorrect()) {
+      throw new Exception();
+    }
 
   } // check()
 
@@ -181,7 +209,6 @@ public class BlockChain implements Iterable<Transaction> {
    * Find one user's balance.
    *
    * @param user The user whose balance we want to find.
-   *
    * @return that user's balance (or 0, if the user is not in the system).
    */
   public int balance(String user) {
