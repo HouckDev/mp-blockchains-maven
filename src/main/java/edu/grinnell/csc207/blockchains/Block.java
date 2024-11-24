@@ -197,12 +197,12 @@ public class Block {
   public String toString() {
     if (getTransaction().getSource().isEmpty()) {
       return String.format(
-          "Block <num> (Transaction: [Deposit Target <target>, Amount: <amt>], Nonce: <nonce>, prevHash: <prevHash>, hash: <hash>)",
+          "Block %s (Transaction: [Deposit Target %s, Amount: %s], Nonce: %s, prevHash: %s, hash: %s)",
           getNum(), getTransaction().getTarget(),
           getTransaction().getAmount(), getNonce(), getPrevHash(), getHash());
     } else {
       return String.format(
-          "Block <num> (Transaction: [Source: <source>, Target <target>, Amount: <amt>], Nonce: <nonce>, prevHash: <prevHash>, hash: <hash>)",
+          "Block %s (Transaction: [Source: %s, Target %s, Amount: %s], Nonce: %s, prevHash: %s, hash: %s)",
           getNum(), getTransaction().getSource(), getTransaction().getTarget(),
           getTransaction().getAmount(), getNonce(), getPrevHash(), getHash());
     }

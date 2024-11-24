@@ -106,7 +106,7 @@ public class BlockChainUI {
           nonce = IOUtils.readInt(pen, eyes, "Nonce: ");
           if (chain.getLastBlock() == null) {
             b = new Block(chain.getSize(), new Transaction(source, target, amount),
-                new Hash(null), nonce);
+                new Hash(new byte[] {}), nonce);
           } else {
             b = new Block(chain.getSize(), new Transaction(source, target, amount),
                 chain.getLastBlock().getHash(), nonce);
@@ -121,12 +121,12 @@ public class BlockChainUI {
           break;
 
         case "blocks":
-        Iterator<Block> blockIterator = chain.blocks();
-        pen.printf("Blocks");
-        while (blockIterator.hasNext()) {
-          Block block = (Block) blockIterator.next();
-          pen.printf(block.toString());
-        }
+          Iterator<Block> blockIterator = chain.blocks();
+          pen.println("Blocks " + chain.getSize());
+          while (blockIterator.hasNext()) {
+            Block block = (Block) blockIterator.next();
+            pen.println(block.toString());
+          }
           break;
 
         case "check":

@@ -84,10 +84,10 @@ public class BlockChain implements Iterable<Transaction> {
    *         for the contents, or (c) the previous hash is incorrect.
    */
   public void append(Block blk) {
-    if (getLastBlock() != null && blk.getPrevHash() != getLastBlock().getHash()) {
+    if (getLastBlock() != null && !blk.getPrevHash().equals(getLastBlock().getHash())) {
       throw new IllegalArgumentException();
     }
-    if (blk.getHash() != blk.calculateHash()) {
+    if (!blk.getHash().equals(blk.calculateHash())) {
       throw new IllegalArgumentException();
     }
     if (getLastBlock() == null) {
@@ -222,7 +222,7 @@ public class BlockChain implements Iterable<Transaction> {
       Block currentBlock = rootBlock;
 
       public boolean hasNext() {
-        if (currentBlock == null || currentBlock.getNextBlock() == null) {
+        if (currentBlock == null) {
           return false;
         }
         return true;
