@@ -151,7 +151,8 @@ public class BlockChain implements Iterable<Transaction> {
    * @throws Exception If things are wrong at any block.
    */
   public void check() throws Exception {
-    // STUB
+    if (!isCorrect()) {throw new Exception();}
+
   } // check()
 
   /**
