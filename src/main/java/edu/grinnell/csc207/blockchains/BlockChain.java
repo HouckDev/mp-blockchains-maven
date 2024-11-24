@@ -40,6 +40,7 @@ public class BlockChain implements Iterable<Transaction> {
   // | Constructors |
   // +--------------+
 
+
   /**
    * Create a new blockchain using a validator to check elements.
    *
