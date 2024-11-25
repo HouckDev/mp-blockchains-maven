@@ -10,6 +10,6 @@ Authors
 
 Acknowledgements
 
-* _Forthcoming_.
+* _Oracle java docs: general code references_.
 
 This code may be found at <https://github.com/HouckDev/mp-blockchains-maven>. The original code may be found at <https://github.com/Grinnell-CSC207/mp-blockchinas-maven>.

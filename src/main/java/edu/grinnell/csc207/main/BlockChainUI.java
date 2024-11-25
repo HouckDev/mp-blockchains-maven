@@ -5,7 +5,6 @@ import edu.grinnell.csc207.blockchains.BlockChain;
 import edu.grinnell.csc207.blockchains.Hash;
 import edu.grinnell.csc207.blockchains.HashValidator;
 import edu.grinnell.csc207.blockchains.Transaction;
-
 import edu.grinnell.csc207.util.IOUtils;
 
 import java.io.PrintWriter;
@@ -16,7 +15,8 @@ import java.io.InputStreamReader;
 /**
  * A simple UI for our BlockChain class.
  *
- * @author Your Name Here
+ * @author Paden Houck
+ * @author Grant Sackmann
  * @author Samuel A. Rebelsky
  */
 public class BlockChainUI {
@@ -106,17 +106,18 @@ public class BlockChainUI {
           nonce = IOUtils.readInt(pen, eyes, "Nonce: ");
           if (chain.getLastBlock() == null) {
             b = new Block(chain.getSize(), new Transaction(source, target, amount),
-                new Hash(new byte[] {}), nonce);
+                new Hash(new byte[]{}), nonce);
           } else {
             b = new Block(chain.getSize(), new Transaction(source, target, amount),
                 chain.getLastBlock().getHash(), nonce);
-          }
+          } // if-else
           try {
             chain.append(b);
             pen.println("Appended: " + b.toString());
           } catch (Exception e) {
-            pen.println("Could not append: Invalid hash in appended block: " + b.getHash().toString());
-          }
+            pen.println("Could not append: Invalid hash in appended block: "
+                + b.getHash().toString());
+          } // try-catch
           break;
 
         case "balance":
@@ -130,7 +131,7 @@ public class BlockChainUI {
           while (blockIterator.hasNext()) {
             Block block = (Block) blockIterator.next();
             pen.println(block.toString());
-          }
+          } // while
           break;
 
         case "check":
@@ -139,7 +140,7 @@ public class BlockChainUI {
             pen.println("The blockchain checks out.");
           } catch (Exception e) {
             pen.println("The blockchain does not check out.");
-          }
+          } // try-catch
           break;
 
         case "help":
@@ -168,7 +169,7 @@ public class BlockChainUI {
           while (transactionIterator.hasNext()) {
             Block block = (Block) transactionIterator.next();
             pen.printf("> '%s' : '%s'", 0, block.getTransaction().toString());
-          }
+          } // while
           break;
 
         case "users":
@@ -177,7 +178,7 @@ public class BlockChainUI {
           while (userIterator.hasNext()) {
             String cUser = (String) userIterator.next();
             pen.printf("> '%s' : '%s'", cUser, chain.balance(cUser));
-          }
+          } // while
           break;
 
         default:

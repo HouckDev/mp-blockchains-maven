@@ -6,7 +6,8 @@ import java.util.HexFormat;
 /**
  * Encapsulated hashes.
  *
- * @author Your Name Here
+ * @author Grant Sackmann
+ * @author Paden Houck
  * @author Samuel A. Rebelsky
  */
 public class Hash {
@@ -53,7 +54,7 @@ public class Hash {
    */
   public byte get(int i) {
     return hashData[i];
-  } // get()
+  } // get(int)
 
   /**
    * Get a copy of the bytes in the hash. We make a copy so that the client cannot change them.
@@ -82,7 +83,7 @@ public class Hash {
   public boolean equals(Object other) {
     if (other instanceof Hash) {
       return Arrays.equals(hashData, ((Hash) other).getBytes());
-    }
+    } // if
     return false;
   } // equals(Object)
 

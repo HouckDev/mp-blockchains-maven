@@ -1,18 +1,61 @@
 package edu.grinnell.csc207.blockchains;
 
-import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.NoSuchElementException;
 
 /**
- * Blocks to be stored in blockchains.
+ * Blocks to be stored in blockchain.
  *
- * @author Your Name Here
+ * @author Grant Sackmann
+ * @author Paden Houck
  * @author Samuel A. Rebelsky
  */
 public class Block {
+  // +--------+------------------------------------------------------
+  // | Fields |
+  // +--------+
+
+  /**
+   * Object holding block Transactions.
+   */
+  Transaction transaction;
+
+  /**
+   * Block Hash.
+   */
+  Hash hash;
+
+  /**
+   * The Hash of the previous Block.
+   */
+  Hash prevHash;
+
+  /**
+   * Hash validation object.
+   */
+  HashValidator check;
+
+  /**
+   * Number once— a randomly generated number for cryptographic security.
+   */
+  long nonce;
+
+  /**
+   * Reference to the previous block in the blockchain.
+   */
+  Block previousBlock;
+
+  /**
+   * Reference to the next block in the blockchain.
+   */
+  Block nextBlock;
+
+  /**
+   * the nth block in the blockchain sequence.
+   */
+  int num;
 
   /**
    * The message digest used to compute hashes.
@@ -28,88 +71,28 @@ public class Block {
    * The byte buffer used for longs.
    */
   static ByteBuffer longBuffer = null;
-
-  static void trySetup() {
-    if (md != null) {return;}
-    try {
-      Block.md = MessageDigest.getInstance("sha-256");
-    } catch (NoSuchAlgorithmException e) {
-      throw new NoSuchElementException("Cannot instantiate sha-256");
-    } // try-catch
-    Block.intBuffer = ByteBuffer.allocate(Integer.BYTES);
-    Block.longBuffer = ByteBuffer.allocate(Long.BYTES);
-  }
-  // +--------+------------------------------------------------------
-  // | Fields |
-  // +--------+
-  // Meta data
-  int num;
-
-  // Block data
-  Transaction transaction;
-  Hash hash;
-  Hash preHash;
-  HashValidator check;
-  long nonce;
-
-  // Connection data
-  Block previousBlock;
-
-  public Block getPreviousBlock() {
-    return previousBlock;
-  }
-
-  public void setPreviousBlock(Block previousBlock) {
-    if (this.previousBlock != null) {
-      previousBlock.nextBlock = null;
-    }
-    this.previousBlock = previousBlock;
-    if (this.previousBlock != null) {
-      previousBlock.nextBlock = this;
-    }
-  }
-
-  Block nextBlock;
-
-  public Block getNextBlock() {
-    return nextBlock;
-  }
-
-  public void setNextBlock(Block nextBlock) {
-    if (this.nextBlock != null) {
-      nextBlock.previousBlock = null;
-    }
-    this.nextBlock = nextBlock;
-    if (this.nextBlock != null) {
-      nextBlock.previousBlock = this;
-    }
-  }
-
-
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
 
   /**
-   * Create a new block from the specified block number, transaction, and previous hash, mining to
+   * Create a new block from the specified block number, _transaction, and previous hash, mining to
    * choose a nonce that meets the requirements of the validator.
    *
-   * @param num         The number of the block.
-   * @param transaction The transaction for the block.
-   * @param prevHash    The hash of the previous block.
-   * @param check       The validator used to check the block.
+   * @param pNum         The number of the block.
+   * @param pTransaction The _transaction for the block.
+   * @param pPrevHash    The hash of the previous block.
+   * @param pCheck       The validator used to _check the block.
    */
-  public Block(int num, Transaction transaction, Hash prevHash, HashValidator check) {
+  public Block(int pNum, Transaction pTransaction, Hash pPrevHash, HashValidator pCheck) {
     trySetup();
-
-    this.num = num;
-    this.transaction = transaction;
-    this.preHash = prevHash;
+    this.num = pNum;
+    this.transaction = pTransaction;
+    this.prevHash = pPrevHash;
     this.nonce = 0;
-    // STUB: Mine the nonce
-    while (!check.isValid(calculateHash())) {
+    while (!pCheck.isValid(calculateHash())) {
       this.nonce += 1;
-    }
+    } // while
     computeHash();
 
   } // Block(int, Transaction, Hash, HashValidator)
@@ -117,24 +100,87 @@ public class Block {
   /**
    * Create a new block, computing the hash for the block.
    *
-   * @param num         The number of the block.
-   * @param transaction The transaction for the block.
-   * @param prevHash    The hash of the previous block.
-   * @param nonce       The nonce of the block.
+   * @param pNum         The number of the block.
+   * @param pTransaction The _transaction for the block.
+   * @param pPrevHash    The hash of the previous block.
+   * @param pNonce       The validator used to _check the block.
    */
-  public Block(int num, Transaction transaction, Hash prevHash, long nonce) {
+  public Block(int pNum, Transaction pTransaction, Hash pPrevHash, long pNonce) {
     trySetup();
-
-    this.num = num;
-    this.transaction = transaction;
-    this.preHash = prevHash;
-    this.nonce = nonce;
+    this.num = pNum;
+    this.transaction = pTransaction;
+    this.prevHash = pPrevHash;
+    this.nonce = pNonce;
     computeHash();
   } // Block(int, Transaction, Hash, long)
 
-  // +---------+-----------------------------------------------------
-  // | Helpers |
-  // +---------+
+  // +----------------+------------------------------------------------
+  // | Helper Methods |
+  // +----------------+
+
+  /**
+   * Initializes static fields of class if not already done so.
+   */
+  static void trySetup() {
+    if (md != null) {
+      return;
+    } // if
+    try {
+      Block.md = MessageDigest.getInstance("sha-256");
+    } catch (NoSuchAlgorithmException e) {
+      throw new NoSuchElementException("Cannot instantiate sha-256 Algorithm");
+    } // try-catch
+    Block.intBuffer = ByteBuffer.allocate(Integer.BYTES);
+    Block.longBuffer = ByteBuffer.allocate(Long.BYTES);
+  } // try-setup
+
+  /**
+   * Retrieves the previous block.
+   *
+   * @return Block reference
+   */
+  public Block getPreviousBlock() {
+    return previousBlock;
+  } // getPreviousBlock()
+
+  /**
+   * Sets the block's previous block to the provided block.
+   *
+   * @param pPreviousBlock Block
+   */
+  public void setPreviousBlock(Block pPreviousBlock) {
+    if (this.previousBlock != null) {
+      pPreviousBlock.nextBlock = null;
+    } // if
+    this.previousBlock = pPreviousBlock;
+    if (this.previousBlock != null) {
+      pPreviousBlock.nextBlock = this;
+    } // if
+  } // setPreviousBlock()
+
+  /**
+   * Retrieves the next block.
+   *
+   * @return Block reference
+   */
+  public Block getNextBlock() {
+    return this.nextBlock;
+  } // getNextBlock()
+
+  /**
+   * Sets this block's next block to the provided.
+   *
+   * @param pNextBlock Block
+   */
+  public void setNextBlock(Block pNextBlock) {
+    if (this.nextBlock != null) {
+      pNextBlock.previousBlock = null;
+    } // if
+    this.nextBlock = pNextBlock;
+    if (this.nextBlock != null) {
+      pNextBlock.previousBlock = this;
+    } // if
+  } // setNextBlock(Block)
 
   /**
    * Compute the hash of the block given all the other info already stored in the block.
@@ -196,7 +242,7 @@ public class Block {
    * @return the hash of the previous block.
    */
   public Hash getPrevHash() {
-    return this.preHash;
+    return this.prevHash;
   } // getPrevHash
 
   /**
@@ -216,15 +262,17 @@ public class Block {
   public String toString() {
     if (getTransaction().getSource().isEmpty()) {
       return String.format(
-          "Block %s (Transaction: [Deposit Target %s, Amount: %s], Nonce: %s, prevHash: %s, hash: %s)",
+          "Block %s (Transaction: [Deposit Target %s, Amount: %s], "
+              + "Nonce: %s, prevHash: %s, hash: %s)",
           getNum(), getTransaction().getTarget(),
           getTransaction().getAmount(), getNonce(), getPrevHash(), getHash());
     } else {
       return String.format(
-          "Block %s (Transaction: [Source: %s, Target %s, Amount: %s], Nonce: %s, prevHash: %s, hash: %s)",
+          "Block %s (Transaction: [Source: %s, Target %s, Amount: %s], "
+              + "Nonce: %s, prevHash: %s, hash: %s)",
           getNum(), getTransaction().getSource(), getTransaction().getTarget(),
           getTransaction().getAmount(), getNonce(), getPrevHash(), getHash());
-    }
+    } // if-else
   } // toString()
 
   /**

@@ -1,12 +1,8 @@
 package edu.grinnell.csc207.blockchains;
 
-import java.nio.ByteBuffer;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Set;
+
 
 /**
  * A full blockchain.
@@ -19,7 +15,14 @@ public class BlockChain implements Iterable<Transaction> {
   // | Fields |
   // +--------+
 
+  /**
+   * The head Block of the blockchain.
+   */
   Block rootBlock;
+
+  /**
+   * Validator object to check blockchain.
+   */
   HashValidator check;
 
   // +--------------+------------------------------------------------
@@ -30,24 +33,30 @@ public class BlockChain implements Iterable<Transaction> {
   /**
    * Create a new blockchain using a validator to check elements.
    *
-   * @param check The validator used to check elements.
+   * @param checker The validator used to check elements.
    */
-  public BlockChain(HashValidator check) {
-    this.check = check;
+  public BlockChain(HashValidator checker) {
+    this.check = checker;
   } // BlockChain(HashValidator)
 
   // +---------+-----------------------------------------------------
   // | Helpers |
   // +---------+
+
+  /**
+   * Retrieves the last block of the blockchain.
+   *
+   * @return Block
+   */
   public Block getLastBlock() {
     Block current = this.rootBlock;
 
     while (current != null && current.getNextBlock() != null) {
       current = current.getNextBlock();
-    }
+    } // while
 
     return current;
-  }
+  } // getLastBlock()
   // +---------+-----------------------------------------------------
   // | Methods |
   // +---------+
@@ -61,7 +70,7 @@ public class BlockChain implements Iterable<Transaction> {
   public Block mine(Transaction t) {
     if (getLastBlock() == null) {
       return new Block(getSize(), t, new Hash(new byte[]{}), check);
-    }
+    } // if
     return new Block(getSize(), t, getLastBlock().getHash(), check);
   } // mine(Transaction)
 
@@ -73,13 +82,13 @@ public class BlockChain implements Iterable<Transaction> {
   public int getSize() {
     if (this.rootBlock == null) {
       return 0;
-    }
+    } // if
     Block current = this.rootBlock;
     int count = 1;
     while (current.getNextBlock() != null) {
       current = current.getNextBlock();
       count++;
-    }
+    } // while
     return count;
   } // getSize()
 
@@ -93,15 +102,15 @@ public class BlockChain implements Iterable<Transaction> {
   public void append(Block blk) {
     if (getLastBlock() != null && !blk.getPrevHash().equals(getLastBlock().getHash())) {
       throw new IllegalArgumentException();
-    }
+    } // if
     if (!blk.getHash().equals(blk.calculateHash())) {
       throw new IllegalArgumentException();
-    }
+    } // if
     if (getLastBlock() == null) {
       rootBlock = blk;
     } else {
       getLastBlock().setNextBlock(blk);
-    }
+    } // if
   } // append()
 
   /**
@@ -113,9 +122,8 @@ public class BlockChain implements Iterable<Transaction> {
   public boolean removeLast() {
     if (this.rootBlock == this.getLastBlock()) {
       return false;
-    }
+    } // if
     this.getLastBlock().getPreviousBlock().setNextBlock(null);
-    ;
     return true;
   } // removeLast()
 
@@ -137,17 +145,22 @@ public class BlockChain implements Iterable<Transaction> {
    */
   public boolean isCorrect() {
     Iterator<Block> blockIterator = this.blocks();
+    HashMap<String, Integer> runningBalances = this.calculateBalances();
     while (blockIterator.hasNext()) {
       Block block = blockIterator.next();
       if (block.getPreviousBlock() != null
           && block.getPrevHash() != block.getPreviousBlock().getHash()) {
         return false;
-      }
-      if (block.getPreviousBlock() != null && block.getHash() != block.calculateHash()) {
+      } // if
+      if (block.getPreviousBlock() != null
+          && block.getHash() != block.calculateHash()) {
         return false;
-      }
-      // STUB: Implement balance checks
-    }
+      } // if
+      if (runningBalances.get(block.getTransaction().getTarget()) < 0
+          || runningBalances.get(block.getTransaction().getSource()) < 0) {
+        return false;
+      } // if
+    } // while
     return true;
   } // isCorrect()
 
@@ -161,8 +174,7 @@ public class BlockChain implements Iterable<Transaction> {
   public void check() throws Exception {
     if (!isCorrect()) {
       throw new Exception();
-    }
-
+    } // if
   } // check()
 
   /**
@@ -200,6 +212,11 @@ public class BlockChain implements Iterable<Transaction> {
     return 0;
   } // balance()
 
+  /**
+   * Calculates the final balances users in the blockchain.
+   *
+   * @return HashMap of String usernames to balances
+   */
   public HashMap<String, Integer> calculateBalances() {
     HashMap<String, Integer> runningBalances = new HashMap<String, Integer>();
     Iterator<Block> blockIterator = this.blocks();
@@ -231,10 +248,7 @@ public class BlockChain implements Iterable<Transaction> {
       Block currentBlock = rootBlock;
 
       public boolean hasNext() {
-        if (currentBlock == null) {
-          return false;
-        }
-        return true;
+        return currentBlock != null;
       } // hasNext()
 
       public Block next() {
@@ -255,10 +269,7 @@ public class BlockChain implements Iterable<Transaction> {
       Block currentBlock = rootBlock;
 
       public boolean hasNext() {
-        if (currentBlock.getNextBlock() == null) {
-          return false;
-        }
-        return true;
+        return currentBlock.getNextBlock() != null;
       } // hasNext()
 
       public Transaction next() {
